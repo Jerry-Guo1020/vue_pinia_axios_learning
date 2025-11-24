@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { loginApi } from "../api/user"
+import { getUsers } from "../api/user"
+import router from "../router"
 
 export const useUserStore = defineStore("user", {
     state: () => ({
@@ -18,16 +19,37 @@ export const useUserStore = defineStore("user", {
             username,
             password,
             remenberMe
-        ){
+        ) {
             try {
-                const response = await loginApi(username, password);
-                if (response.user.username !== username || response.user.password !== password) {
+
+                // 我要加入这个列表是因为：json-server其实json输出，
+                const users = await getUsers()
+                if (!users || users.length === 0) {
                     return false
                 }
 
+                console.log(users)
+
+                for (let i = 0; i < users.length; i++) {
+                    const element = users[i];
+                    // console.log(element);
+                    console.log(element.username)
+                    if (username != element.username || password != element.password) {
+                        return false;
+                    } else {
+                        console.log("ok");
+                        return true;
+                    }
+
+                }
+
+
+
+                const fakeToken = 'token' + Date.now()
+
                 this.username = username;
                 this.remenberMe = remenberMe
-                this.token = response.token
+                this.token = fakeToken
 
                 if (remenberMe) {
                     this.password = password
@@ -36,7 +58,7 @@ export const useUserStore = defineStore("user", {
                 }
 
                 // 将 token 保存到localStorage
-                localStorage.setItem("token", response.token);
+                localStorage.setItem("token", fakeToken);
                 return true;
             } catch (err) {
                 console.error("login failed", err);
@@ -47,7 +69,7 @@ export const useUserStore = defineStore("user", {
             this.$reset()
             localStorage.removeItem("user")
             localStorage.removeItem("token")
-            router.push('/login')
+            router.push('/')
         }
     },
 
