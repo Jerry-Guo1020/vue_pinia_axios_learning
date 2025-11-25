@@ -4,7 +4,7 @@ import router from "../router"
 
 export const useUserStore = defineStore("user", {
     state: () => ({
-        remenberMe: false,
+        rememberMe: false,  // 修复拼写错误
         token: "",
         username: "",
         password: "",
@@ -18,40 +18,30 @@ export const useUserStore = defineStore("user", {
         async login(
             username,
             password,
-            remenberMe
+            rememberMe
         ) {
             try {
-
-                // 我要加入这个列表是因为：json-server其实json输出，
+                // 获取用户列表
                 const users = await getUsers()
                 if (!users || users.length === 0) {
                     return false
                 }
 
-                console.log(users)
-
-                for (let i = 0; i < users.length; i++) {
-                    const element = users[i];
-                    // console.log(element);
-                    console.log(element.username)
-                    if (username != element.username || password != element.password) {
-                        return false;
-                    } else {
-                        console.log("ok");
-                        return true;
-                    }
-
+                // 验证用户名和密码
+                const user = users.find(u => u.username === username && u.password === password)
+                if (!user) {
+                    return false
                 }
 
-
-
+                // 生成假的token
                 const fakeToken = 'token' + Date.now()
 
+                // 只有登录成功才保存用户信息
                 this.username = username;
-                this.remenberMe = remenberMe
+                this.rememberMe = rememberMe  // 修复拼写错误
                 this.token = fakeToken
 
-                if (remenberMe) {
+                if (rememberMe) {
                     this.password = password
                 } else {
                     this.password = "";

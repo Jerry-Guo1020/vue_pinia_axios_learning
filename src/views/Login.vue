@@ -8,11 +8,11 @@
             <el-form :model="loginForm" :rules="rules" ref="loginFormRef">
 
                 <el-form-item prop="username" label="账号">
-                    <el-input placeholder="📪请输入账号"  v-model="loginForm.username"></el-input>
+                    <el-input placeholder="📪请输入账号" v-model="loginForm.username"></el-input>
                 </el-form-item>
 
                 <el-form-item prop="password" label="密码">
-                    <el-input placeholder="🔒请输入密码" type="password"  v-model="loginForm.password"></el-input>
+                    <el-input placeholder="🔒请输入密码" type="password" v-model="loginForm.password"></el-input>
                 </el-form-item>
 
                 <el-form-item class="flex">
@@ -46,41 +46,39 @@ const loginForm = reactive({
 })
 
 onMounted(() => {
-    const UserStore = useUserStore()
-    loginForm.rememberMe = UserStore.remenberMe
-    if(UserStore.remenberMe) {
-        loginForm.username = UserStore.username
-        loginForm.password = UserStore.password
+    const userStore = useUserStore()
+    // 修复拼写错误，从 rememberMe 加载状态
+    loginForm.rememberMe = userStore.rememberMe
+    if (userStore.rememberMe) {
+        loginForm.username = userStore.username
+        loginForm.password = userStore.password
     }
 })
 
 const rules = reactive({
-  username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+    username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+    password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 });
-
 
 const handleLogin = async () => {
     try {
         await loginFormRef.value.validate()
-        const res = await useUserStore().login(
+        const userStore = useUserStore()
+        const res = await userStore.login(
             loginForm.username,
             loginForm.password,
             loginForm.rememberMe
         )
         if (res) {
             ElMessage.success("登录成功")
-            router.push('/home')
+            router.push('/home/student')
         } else {
-            console.log("error submfsfsfsit");
-            ElMessage.error("请fsf再输入一次")
+            ElMessage.error("用户名或密码错误")
         }
     } catch (e) {
-        ElMessage.error("请再输入一次")
+        ElMessage.error("登录失败，请稍后重试")
     }
 }
-
-
 </script>
 
 <style scoped>

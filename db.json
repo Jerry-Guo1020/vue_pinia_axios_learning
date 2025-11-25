@@ -7,9 +7,50 @@
     },
     {
       "id": "2",
-      "username": "jerryesffsef",
+      "username": "tom",
       "password": "123456"
     }
-   
+  ],
+  "students": [
+    {
+      "id": "1",
+      "name": "张三",
+      "studentId": "2021001",
+      "class": "计算机科学与技术1班",
+      "phone": "13652342685",
+      "email": "zhangsan@example.com"
+    },
+    {
+      "id": "2",
+      "name": "李四",
+      "studentId": "2021002",
+      "class": "软件工程2班",
+      "phone": "13800138002",
+      "email": "lisi@example.com"
+    },
+    {
+      "id": "3",
+      "name": "王五",
+      "studentId": "2021003",
+      "class": "网络工程3班",
+      "phone": "13800138003",
+      "email": "wangwu@example.com"
+    },
+    {
+      "id": "4",
+      "name": "赵六",
+      "studentId": "2021004",
+      "class": "信息安全1班",
+      "phone": "13800138004",
+      "email": "zhaoliu@example.com"
+    },
+    {
+      "id": "5",
+      "name": "钱七",
+      "studentId": "2021005",
+      "class": "数据科学与大数据技术2班",
+      "phone": "13800138005",
+      "email": "qianqi@example.com"
+    }
   ]
 }
