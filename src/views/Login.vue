@@ -1,31 +1,53 @@
 <template>
     <div class="login-container">
-
-        <el-card class="login-card">
-            <strong>
-                <h1 class="login-title">用户登录👋</h1>
-            </strong>
-            <el-form :model="loginForm" :rules="rules" ref="loginFormRef">
-
-                <el-form-item prop="username" label="账号">
-                    <el-input placeholder="📪请输入账号" v-model="loginForm.username"></el-input>
-                </el-form-item>
-
-                <el-form-item prop="password" label="密码">
-                    <el-input placeholder="🔒请输入密码" type="password" v-model="loginForm.password"></el-input>
-                </el-form-item>
-
-                <el-form-item class="flex">
-                    <div class="fcheckbox-container">
-                        <el-checkbox v-model="loginForm.rememberMe">记住我</el-checkbox><br>
+        <div class="login-box">
+            <el-card class="login-card">
+                <div class="login-header">
+                    <div class="logo">
+                        <h1 class="system-name">学员管理系统</h1>
                     </div>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="success" @click="handleLogin">登录</el-button>
-                    <el-button>注册账号</el-button>
-                </el-form-item>
-            </el-form>
-        </el-card>
+                    <p class="welcome-text">欢迎使用学员管理系统</p>
+                </div>
+                <el-form :model="loginForm" :rules="rules" ref="loginFormRef" class="login-form">
+                    <el-form-item prop="username">
+                        <el-input placeholder="请输入账号" v-model="loginForm.username" prefix-icon="User" size="large"
+                            clearable>
+                            <template #prepend>
+                                <span class="input-label">账号</span>
+                            </template>
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item prop="password">
+                        <el-input placeholder="请输入密码" type="password" v-model="loginForm.password" prefix-icon="Lock"
+                            size="large" show-password>
+                            <template #prepend>
+                                <span class="input-label">密码</span>
+                            </template>
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item>
+                        <div class="remember-forgot">
+                            <el-checkbox v-model="loginForm.rememberMe">记住我</el-checkbox>
+                            <el-link type="primary" :underline="false">忘记密码？</el-link>
+                        </div>
+                    </el-form-item>
+
+                    <el-form-item>
+                        <el-button type="primary" @click="handleLogin" size="large" class="login-btn" :loading="loading"
+                            round>
+                            登录
+                        </el-button>
+                    </el-form-item>
+
+                    <div class="register-section">
+                        <span>还没有账号？</span>
+                        <el-link type="primary" :underline="false">立即注册</el-link>
+                    </div>
+                </el-form>
+            </el-card>
+        </div>
     </div>
 </template>
 
@@ -33,11 +55,12 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus';
 import { useUserStore } from "../store/user"
-
 import { useRouter } from 'vue-router'
+import { User, Lock } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const loginFormRef = ref()
+const loading = ref(false)
 
 const loginForm = reactive({
     username: '',
@@ -47,7 +70,6 @@ const loginForm = reactive({
 
 onMounted(() => {
     const userStore = useUserStore()
-    // 修复拼写错误，从 rememberMe 加载状态
     loginForm.rememberMe = userStore.rememberMe
     if (userStore.rememberMe) {
         loginForm.username = userStore.username
@@ -63,20 +85,26 @@ const rules = reactive({
 const handleLogin = async () => {
     try {
         await loginFormRef.value.validate()
+        loading.value = true
+
         const userStore = useUserStore()
-        const res = await userStore.login(
+        const result = await userStore.login(
             loginForm.username,
             loginForm.password,
             loginForm.rememberMe
         )
-        if (res) {
-            ElMessage.success("登录成功")
+
+        if (result.success) {
+            ElMessage.success(result.message)
             router.push('/home/student')
         } else {
-            ElMessage.error("用户名或密码错误")
+            ElMessage.error(result.message)
         }
     } catch (e) {
+        console.error("登录失败:", e)
         ElMessage.error("登录失败，请稍后重试")
+    } finally {
+        loading.value = false
     }
 }
 </script>
@@ -86,57 +114,81 @@ const handleLogin = async () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-box {
     width: 100%;
-    height: 96vh;
+    max-width: 450px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: black;
+}
+
+
+.system-name {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.welcome-text {
+    font-size: 16px;
+    opacity: 0.9;
+    margin: 0;
 }
 
 .login-card {
-    width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    border: none;
+    padding: 30px;
 }
 
-.login-title {
+.login-form :deep(.el-form-item) {
+    margin-bottom: 25px;
+}
+
+.input-label {
+    display: inline-block;
+    width: 40px;
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 24px;
-    color: #303133;
-    font-weight: 500;
+    color: #909399;
 }
 
-/* 表单整体居中 */
-.el-form {
-    width: 85%;
-    margin: 0 auto;
-}
-
-/* 标签文字居中 */
-.el-form-item__label {
-    justify-content: center;
-}
-
-/* 移除默认的左边距 */
-.el-form-item__content {
-    margin-left: 0 !important;
-}
-
-/* 按钮居中 */
-:deep(.el-form-item:last-child .el-form-item__content) {
+.remember-forgot {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    /* 按钮之间的间距 */
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* 可选：美化按钮样式 */
-:deep(.el-button) {
-    width: 120px;
-    /* 统一按钮宽度 */
+.login-btn {
+    width: 100%;
+    margin-top: 10px;
+    height: 45px;
+    font-size: 16px;
 }
 
-.backhome {
-    width: 20%;
-    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+.register-section {
+    text-align: center;
+    margin-top: 20px;
+    color: #606266;
+}
+
+.register-section .el-link {
+    margin-left: 5px;
+}
+
+:deep(.el-input-group__prepend) {
+    background-color: #f5f7fa;
+    border-right: none;
+}
+
+:deep(.el-input__wrapper) {
+    border-radius: 0 4px 4px 0;
 }
 </style>

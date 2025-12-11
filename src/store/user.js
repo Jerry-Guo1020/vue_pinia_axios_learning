@@ -4,7 +4,7 @@ import router from "../router"
 
 export const useUserStore = defineStore("user", {
     state: () => ({
-        rememberMe: false,  // 修复拼写错误
+        rememberMe: false,
         token: "",
         username: "",
         password: "",
@@ -15,51 +15,60 @@ export const useUserStore = defineStore("user", {
     },
 
     actions: {
-        async login(
-            username,
-            password,
-            rememberMe
-        ) {
+        async login(username, password, rememberMe) {
             try {
                 // 获取用户列表
                 const users = await getUsers()
                 if (!users || users.length === 0) {
-                    return false
+                    return { success: false, message: '用户数据为空' }
                 }
 
-                // 验证用户名和密码
-                const user = users.find(u => u.username === username && u.password === password)
+                // 查找匹配的用户
+                const user = users.find(u => u.username === username && u.password === password);
+                
                 if (!user) {
-                    return false
+                    return { success: false, message: '用户名或密码错误' }
                 }
 
-                // 生成假的token
-                const fakeToken = 'token' + Date.now()
+                // 生成token
+                const fakeToken = 'token_' + username + '_' + Date.now()
 
-                // 只有登录成功才保存用户信息
+                // 更新状态
                 this.username = username;
-                this.rememberMe = rememberMe  // 修复拼写错误
-                this.token = fakeToken
+                this.rememberMe = rememberMe;
+                this.token = fakeToken;
 
                 if (rememberMe) {
-                    this.password = password
+                    this.password = password;
                 } else {
                     this.password = "";
                 }
 
                 // 将 token 保存到localStorage
                 localStorage.setItem("token", fakeToken);
-                return true;
+                
+                return { success: true, message: '登录成功' };
             } catch (err) {
                 console.error("login failed", err);
-                return false
+                return { success: false, message: '登录过程中发生错误' }
             }
         },
+        
         logout() {
             this.$reset()
             localStorage.removeItem("user")
             localStorage.removeItem("token")
             router.push('/')
+        },
+        
+        // 检查登录状态
+        checkLoginStatus() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                this.token = token;
+                return true;
+            }
+            return false;
         }
     },
 

@@ -51,6 +51,54 @@
       "class": "数据科学与大数据技术2班",
       "phone": "13800138005",
       "email": "qianqi@example.com"
+    },
+    {
+      "id": "6",
+      "name": "孙八",
+      "studentId": "2021006",
+      "class": "软件工程2班",
+      "phone": "13800138006",
+      "email": "sunba@example.com"
+    },
+    {
+      "id": "7",
+      "name": "钱七",
+      "studentId": "2021007",
+      "class": "数据科学与大数据技术2班",
+      "phone": "13800138005",
+      "email": "qianqi@example.com"
+    },
+    {
+      "id": "8",
+      "name": "钱七",
+      "studentId": "2021008",
+      "class": "数据科学与大数据技术2班",
+      "phone": "13800138005",
+      "email": "qianqi@example.com"
+    },
+    {
+      "id": "9",
+      "name": "钱七",
+      "studentId": "2021009",
+      "class": "数据科学与大数据技术2班",
+      "phone": "13800138005",
+      "email": "qianqi@example.com"
+    },
+    {
+      "id": "10",
+      "name": "钱七",
+      "studentId": "2021010",
+      "class": "数据科学与大数据技术2班",
+      "phone": "13800138005",
+      "email": "qianqi@example.com"
+    },
+    {
+      "id": "11",
+      "name": "钱七",
+      "studentId": "2021011",
+      "class": "数据科学与大数据技术2班",
+      "phone": "13800138005",
+      "email": "qianqi@example.com"
     }
   ]
 }
